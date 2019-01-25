@@ -1,5 +1,6 @@
 import * as express from 'express';
 import { authorize } from '../auth';
+import { AuthService } from '../services/auth.service';
 import { AuthController } from './controllers/auth.controller';
 import { LiteralController } from './controllers/literal.controller';
 import { MeterController } from './controllers/meter.controller';
@@ -7,36 +8,38 @@ import { TariffController } from './controllers/tariff.controller';
 
 export class Routes {
 
-    private app: express.Application;
+    private readonly app: express.Application;
+    private readonly authService: AuthService;
 
     constructor(app: express.Application) {
         this.app = app;
+        this.authService = new AuthService();
     }
 
     public registerLiteralRoutes() {
         const literal = new LiteralController();
-        this.app.route('/literals').get(literal.get);
+        this.app.route('/literals').get((req, res) => literal.get(req, res));
     }
 
     public registerAuthRoutes() {
-        const auth = new AuthController();
-        this.app.route('/auth/register').post(auth.register);
-        this.app.route('/auth/login').post(auth.login);
+        const auth = new AuthController(this.authService);
+        this.app.route('/register').post((req, res) => auth.register(req, res));
+        this.app.route('/login').post((req, res) => auth.login(req, res));
     }
 
     public registerMeterRoutes() {
         const meter = new MeterController();
-        this.app.route('/meters').get(authorize, meter.get);
-        this.app.route('/meter').put(meter.add);
-        this.app.route('/meter').post(meter.update);
-        this.app.route('/meter').delete(meter.delete);
+        this.app.route('/meters').get((req, res) => meter.get(req, res));
+        this.app.route('/meter').put((req, res) => meter.add(req, res));
+        this.app.route('/meter').post((req, res) => meter.update(req, res));
+        this.app.route('/meter').delete((req, res) => meter.delete(req, res));
     }
 
     public registerTariffRoutes() {
         const tariff = new TariffController();
-        this.app.route('/tariffs').get(tariff.get);
-        this.app.route('/tariff').put(tariff.add);
-        this.app.route('/tariff').post(tariff.update);
-        this.app.route('/tariff').delete(tariff.delete);
+        this.app.route('/tariffs').get((req, res) => tariff.get(req, res));
+        this.app.route('/tariff').put((req, res) => tariff.add(req, res));
+        this.app.route('/tariff').post((req, res) => tariff.update(req, res));
+        this.app.route('/tariff').delete((req, res) => tariff.delete(req, res));
     }
 }

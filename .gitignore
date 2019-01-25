@@ -79,5 +79,12 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
+#vscode
+.vscode/
+
+#config files
+config/dev
+config/prod
+
 # Distribution output
 /dist
