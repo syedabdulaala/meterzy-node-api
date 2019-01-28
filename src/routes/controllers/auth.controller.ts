@@ -14,9 +14,9 @@ export class AuthController extends BaseController {
             const payload = { id: user.id };
             const resBody = { displayName: user.displayName, token: this.authService.getSignedJwt(payload) };
             res.send(resBody);
+        } else {
+            this.badRequest(res, { message: 'Invalid email or password' });
         }
-
-        this.badRequest(res, { message: 'Invalid email or password' });
     }
 
     public async register(req: Request, res: Response): Promise<void> {
@@ -29,7 +29,8 @@ export class AuthController extends BaseController {
 
         if (id) {
             this.success(res);
+        } else {
+            this.serverError(res);
         }
-        this.serverError(res);
     }
 }

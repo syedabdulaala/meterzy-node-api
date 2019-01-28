@@ -1,20 +1,20 @@
 import * as fs from 'fs';
 import * as jwt from 'jsonwebtoken';
-import { getMongoManager, MongoEntityManager } from 'typeorm';
+import { MongoDbContext } from 'src/db/mongo-db-context';
 import { App } from '../app';
 import { AppUser } from '../db/entities/app-user';
 
 export class AuthService {
 
-    private readonly entityManager: MongoEntityManager;
+    private readonly mongoContext: MongoDbContext;
 
-    constructor() {
-        this.entityManager = getMongoManager();
+    constructor(mongoContext: MongoDbContext) {
+        this.mongoContext = mongoContext;
     }
 
     public async getUser(email: string): Promise<AppUser> {
         const emailHash = this.encrypt(email);
-        return await this.entityManager.findOne(AppUser, { emailHash });
+        return await this.mongoContext.getAppUserRepo().findOne({ emailHash });
     }
 
     public async addUser(values: { displayName: string, email: string, password: string }): Promise<string> {
@@ -26,7 +26,7 @@ export class AuthService {
             appUser.emailHash = this.encrypt(values.email);
             appUser.passwordHash = this.encrypt(values.password);
             appUser.status = 0;
-            return (await this.entityManager.save(appUser)).id;
+            return (await this.mongoContext.getAppUserRepo().save(appUser)).id;
         } catch (error) {
             return null;
         }
@@ -41,13 +41,15 @@ export class AuthService {
     }
 
     public verifyJwt(token: string) {
-        const publicKey: string = fs.readFileSync(`../../config/${process.env.NODE_ENV}/jwt-public.key`, 'utf8');
+        const keyPath = `${process.cwd()}\\config\\${process.env.NODE_ENV}\\jwt-public.key`;
+        const publicKey: string = fs.readFileSync(keyPath, 'utf8');
         const verifyOptions: jwt.VerifyOptions = App.config.jwtVerifyOptions;
         return jwt.verify(token, publicKey, verifyOptions);
     }
 
     public getSignedJwt(payload: object) {
-        const privateKey: string = fs.readFileSync(`../../config/${process.env.NODE_ENV}/jwt-private.key`, 'utf8');
+        const keyPath = `${process.cwd()}\\config\\${process.env.NODE_ENV}\\jwt-private.key`;
+        const privateKey: string = fs.readFileSync(keyPath, 'utf8');
         const signOptions: jwt.SignOptions = App.config.jwtSignOptions;
         return jwt.sign(payload, privateKey, signOptions);
     }

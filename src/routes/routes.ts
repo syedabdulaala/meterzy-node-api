@@ -1,5 +1,6 @@
 import * as express from 'express';
-import { authorize } from '../auth';
+import { App } from '../app';
+import { MongoDbContext } from '../db/mongo-db-context';
 import { AuthService } from '../services/auth.service';
 import { AuthController } from './controllers/auth.controller';
 import { LiteralController } from './controllers/literal.controller';
@@ -13,7 +14,7 @@ export class Routes {
 
     constructor(app: express.Application) {
         this.app = app;
-        this.authService = new AuthService();
+        this.authService = new AuthService(new MongoDbContext(App.config.database.mongoDbUrl));
     }
 
     public registerLiteralRoutes() {
