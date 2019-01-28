@@ -41,15 +41,13 @@ export class AuthService {
     }
 
     public verifyJwt(token: string) {
-        const keyPath = `${process.cwd()}\\config\\${process.env.NODE_ENV}\\jwt-public.key`;
-        const publicKey: string = fs.readFileSync(keyPath, 'utf8');
+        const publicKey: string = fs.readFileSync(App.config.paths.jwtPrivateKey, 'utf8');
         const verifyOptions: jwt.VerifyOptions = App.config.jwtVerifyOptions;
         return jwt.verify(token, publicKey, verifyOptions);
     }
 
     public getSignedJwt(payload: object) {
-        const keyPath = `${process.cwd()}\\config\\${process.env.NODE_ENV}\\jwt-private.key`;
-        const privateKey: string = fs.readFileSync(keyPath, 'utf8');
+        const privateKey: string = fs.readFileSync(App.config.paths.jwtPrivateKey, 'utf8');
         const signOptions: jwt.SignOptions = App.config.jwtSignOptions;
         return jwt.sign(payload, privateKey, signOptions);
     }

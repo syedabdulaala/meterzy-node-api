@@ -6,8 +6,14 @@ export interface Config {
     defaultSalt: string;
     jwtSignOptions: SignOptions;
     jwtVerifyOptions: VerifyOptions;
+    paths: Path;
 }
 
 export interface Database {
     mongoDbUrl: string;
+}
+
+export interface Path {
+    jwtPublicKey: string;
+    jwtPrivateKey: string;
 }

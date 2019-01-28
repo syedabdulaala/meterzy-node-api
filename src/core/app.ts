@@ -13,6 +13,7 @@ export class App {
 
     constructor() {
         this.app = express();
+        this.generatePaths();
         this.configBase();
         this.configRoutes();
     }
@@ -28,6 +29,13 @@ export class App {
         routes.registerLiteralRoutes();
         routes.registerMeterRoutes();
         routes.registerTariffRoutes();
+    }
+
+    private generatePaths() {
+        App.config.paths = {
+            jwtPrivateKey: `${process.cwd()}\\config\\${process.env.NODE_ENV}\\jwt-private.key`,
+            jwtPublicKey: `${process.cwd()}\\config\\${process.env.NODE_ENV}\\jwt-public.key`,
+        };
     }
 }
 
