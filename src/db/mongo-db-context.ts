@@ -37,7 +37,7 @@ export class MongoDbContext {
 
     private async connect() {
         this.connection = await createConnection({
-            entities: [`${__dirname}\\entities\\*.ts`],
+            entities: [`${__dirname}\\entities\\*{.ts,.js}`],
             type: 'mongodb',
             url: this.URL,
             useNewUrlParser: true,

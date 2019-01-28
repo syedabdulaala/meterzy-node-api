@@ -1,9 +1,9 @@
+import { NextFunction, Request, Response } from 'express';
 import * as fs from 'fs';
 import * as jwt from 'jsonwebtoken';
 import { MongoDbContext } from 'src/db/mongo-db-context';
 import { App } from '../core/app';
 import { AppUser } from '../db/entities/app-user';
-
 export class AuthService {
 
     private readonly mongoContext: MongoDbContext;
@@ -41,7 +41,7 @@ export class AuthService {
     }
 
     public verifyJwt(token: string) {
-        const publicKey: string = fs.readFileSync(App.config.paths.jwtPrivateKey, 'utf8');
+        const publicKey: string = fs.readFileSync(App.config.paths.jwtPublicKey, 'utf8');
         const verifyOptions: jwt.VerifyOptions = App.config.jwtVerifyOptions;
         return jwt.verify(token, publicKey, verifyOptions);
     }
@@ -50,6 +50,19 @@ export class AuthService {
         const privateKey: string = fs.readFileSync(App.config.paths.jwtPrivateKey, 'utf8');
         const signOptions: jwt.SignOptions = App.config.jwtSignOptions;
         return jwt.sign(payload, privateKey, signOptions);
+    }
+
+    public ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
+        if (req.headers.authorization) {
+            const tokenParts = req.headers.authorization.split(' ');
+            if (tokenParts.length === 2 && tokenParts[0] === 'Bearer') {
+                const payload = this.verifyJwt(tokenParts[1]);
+                if (payload) {
+                    next();
+                }
+            }
+        }
+        res.status(403).send();
     }
 
     private encrypt(value: string) {

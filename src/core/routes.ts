@@ -19,7 +19,7 @@ export class Routes {
 
     public registerLiteralRoutes() {
         const literal = new LiteralController();
-        this.app.route('/literals').get((req, res) => literal.get(req, res));
+        this.app.route('/literals').get(this.authorize, (req, res) => literal.get(req, res));
     }
 
     public registerAuthRoutes() {
@@ -30,17 +30,21 @@ export class Routes {
 
     public registerMeterRoutes() {
         const meter = new MeterController();
-        this.app.route('/meters').get((req, res) => meter.get(req, res));
-        this.app.route('/meter').put((req, res) => meter.add(req, res));
-        this.app.route('/meter').post((req, res) => meter.update(req, res));
-        this.app.route('/meter').delete((req, res) => meter.delete(req, res));
+        this.app.route('/meters').get(this.authorize, (req, res) => meter.get(req, res));
+        this.app.route('/meter').put(this.authorize, (req, res) => meter.add(req, res));
+        this.app.route('/meter').post(this.authorize, (req, res) => meter.update(req, res));
+        this.app.route('/meter').delete(this.authorize, (req, res) => meter.delete(req, res));
     }
 
     public registerTariffRoutes() {
         const tariff = new TariffController();
-        this.app.route('/tariffs').get((req, res) => tariff.get(req, res));
-        this.app.route('/tariff').put((req, res) => tariff.add(req, res));
-        this.app.route('/tariff').post((req, res) => tariff.update(req, res));
-        this.app.route('/tariff').delete((req, res) => tariff.delete(req, res));
+        this.app.route('/tariffs').get(this.authorize, (req, res) => tariff.get(req, res));
+        this.app.route('/tariff').put(this.authorize, (req, res) => tariff.add(req, res));
+        this.app.route('/tariff').post(this.authorize, (req, res) => tariff.update(req, res));
+        this.app.route('/tariff').delete(this.authorize, (req, res) => tariff.delete(req, res));
+    }
+
+    private authorize = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        return this.authService.ensureAuthenticated(req, res, next);
     }
 }
