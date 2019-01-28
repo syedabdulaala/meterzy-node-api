@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as jwt from 'jsonwebtoken';
 import { MongoDbContext } from 'src/db/mongo-db-context';
-import { App } from '../app';
+import { App } from '../core/app';
 import { AppUser } from '../db/entities/app-user';
 
 export class AuthService {

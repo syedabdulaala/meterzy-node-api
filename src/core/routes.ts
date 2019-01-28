@@ -1,11 +1,11 @@
 import * as express from 'express';
-import { App } from '../app';
+import { AuthController } from '../controllers/auth.controller';
+import { LiteralController } from '../controllers/literal.controller';
+import { MeterController } from '../controllers/meter.controller';
+import { TariffController } from '../controllers/tariff.controller';
 import { MongoDbContext } from '../db/mongo-db-context';
 import { AuthService } from '../services/auth.service';
-import { AuthController } from './controllers/auth.controller';
-import { LiteralController } from './controllers/literal.controller';
-import { MeterController } from './controllers/meter.controller';
-import { TariffController } from './controllers/tariff.controller';
+import { App } from './app';
 
 export class Routes {
 

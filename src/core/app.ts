@@ -2,13 +2,13 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import * as fs from 'fs';
 import 'reflect-metadata';
-import { Routes } from './routes/routes';
-import { Config } from './utils/config.model';
+import { Config } from '../utils/config.model';
+import { Routes } from './routes';
 
 export class App {
 
     public static readonly config: Config =
-        JSON.parse(fs.readFileSync(`${process.cwd()}\\config\\dev\\config.json`, 'utf8'));
+        JSON.parse(fs.readFileSync(`${process.cwd()}\\config\\${process.env.NODE_ENV}\\config.json`, 'utf8'));
     public app: express.Application;
 
     constructor() {
