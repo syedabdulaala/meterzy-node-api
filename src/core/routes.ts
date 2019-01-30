@@ -5,16 +5,20 @@ import { MeterController } from '../controllers/meter.controller';
 import { TariffController } from '../controllers/tariff.controller';
 import { MongoDbContext } from '../db/mongo-db-context';
 import { AuthService } from '../services/auth.service';
+import { UserService } from '../services/user.service';
 import { App } from './app';
 
 export class Routes {
 
     private readonly app: express.Application;
     private readonly authService: AuthService;
+    private readonly userService: UserService;
 
     constructor(app: express.Application) {
+        const mongoContext = new MongoDbContext(App.config.database.mongoDbUrl);
         this.app = app;
-        this.authService = new AuthService(new MongoDbContext(App.config.database.mongoDbUrl));
+        this.authService = new AuthService();
+        this.userService = new UserService(mongoContext);
     }
 
     public registerLiteralRoutes() {
@@ -23,7 +27,7 @@ export class Routes {
     }
 
     public registerAuthRoutes() {
-        const auth = new AuthController(this.authService);
+        const auth = new AuthController(this.authService, this.userService);
         this.app.route('/register').post((req, res) => auth.register(req, res));
         this.app.route('/login').post((req, res) => auth.login(req, res));
     }
@@ -45,6 +49,10 @@ export class Routes {
     }
 
     private authorize = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        return this.authService.ensureAuthenticated(req, res, next);
+        if (this.authService.ensureAuthenticated(req.headers.authorization)) {
+            next();
+        } else {
+            res.status(403).send();
+        }
     }
 }
