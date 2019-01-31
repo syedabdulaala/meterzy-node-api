@@ -3,7 +3,7 @@ import { Meter } from '../db/entities/meter';
 import { RangedTariff } from '../db/entities/rangedTariff';
 import { MongoDbContext } from '../db/mongo-db-context';
 
-export class MetersService {
+export class MeterService {
 
     private readonly mongoContext: MongoDbContext;
 
