@@ -15,8 +15,8 @@ export class Routes {
     private readonly userService: UserService;
 
     constructor(app: express.Application) {
-        const mongoContext = new MongoDbContext(App.config.database.mongoDbUrl);
         this.app = app;
+        const mongoContext = new MongoDbContext(App.config.database.mongoDbUrl);
         this.authService = new AuthService();
         this.userService = new UserService(mongoContext);
     }
@@ -49,7 +49,9 @@ export class Routes {
     }
 
     private authorize = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        if (this.authService.ensureAuthenticated(req.headers.authorization)) {
+        const payload = this.authService.ensureAuthenticated(req.headers.authorization);
+        if (payload) {
+            res.locals.payload = payload;
             next();
         } else {
             res.status(403).send();

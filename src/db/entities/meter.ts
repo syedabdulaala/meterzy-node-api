@@ -10,6 +10,9 @@ export class Meter extends Audit {
     public id: string;
 
     @Column()
+    public userId: string;
+
+    @Column()
     public name: string;
 
     @Column()
@@ -19,11 +22,11 @@ export class Meter extends Audit {
     public consumerNo: string;
 
     @Column((type) => FixedTariff)
-    public fixedTariffs: FixedTariff[];
+    public fixedTariffs?: FixedTariff[];
 
     @Column((type) => RangedTariff)
-    public rangedTariffs: RangedTariff[];
+    public rangedTariffs?: RangedTariff[];
 
     @Column((type) => MeterReading)
-    public readings: MeterReading[];
+    public readings?: MeterReading[];
 }

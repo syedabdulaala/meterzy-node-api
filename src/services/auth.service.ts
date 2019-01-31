@@ -26,16 +26,16 @@ export class AuthService {
         return jwt.sign(payload, privateKey, signOptions);
     }
 
-    public ensureAuthenticated(authorization: string): boolean {
+    public ensureAuthenticated(authorization: string): string | object {
         if (authorization) {
             const tokenParts = authorization.split(' ');
             if (tokenParts.length === 2 && tokenParts[0] === 'Bearer') {
                 const payload = this.verifyJwt(tokenParts[1]);
                 if (payload) {
-                    return true;
+                    return payload;
                 }
             }
         }
-        return false;
+        return null;
     }
 }
