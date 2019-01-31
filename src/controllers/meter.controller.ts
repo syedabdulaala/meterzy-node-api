@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
+import { BaseController } from './base.controller';
 
-export class MeterController {
+export class MeterController extends BaseController {
+
     public get(req: Request, res: Response): void {
         res.send('Get meters');
     }

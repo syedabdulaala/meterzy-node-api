@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
+import { BaseController } from './base.controller';
 
-export class TariffController {
+export class TariffController extends BaseController {
+
     public get(req: Request, res: Response): void {
         res.send('Get tariffs');
     }

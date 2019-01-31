@@ -22,39 +22,73 @@ export class Routes {
     }
 
     public registerLiteralRoutes() {
-        const literal = new LiteralController();
-        this.app.route('/literals').get(this.authorize, (req, res) => literal.get(req, res));
+        this.app.route('/literals').get(this.authorize, (req, res) => {
+            const literal = new LiteralController(res.locals.payload);
+            literal.get(req, res);
+        });
     }
 
     public registerAuthRoutes() {
-        const auth = new AuthController(this.authService, this.userService);
-        this.app.route('/register').post((req, res) => auth.register(req, res));
-        this.app.route('/login').post((req, res) => auth.login(req, res));
+        this.app.route('/register').post((req, res) => {
+            const auth = new AuthController(this.authService, this.userService);
+            auth.register(req, res);
+        });
+        this.app.route('/login').post((req, res) => {
+            const auth = new AuthController(this.authService, this.userService);
+            auth.login(req, res);
+        });
     }
 
     public registerMeterRoutes() {
-        const meter = new MeterController();
-        this.app.route('/meters').get(this.authorize, (req, res) => meter.get(req, res));
-        this.app.route('/meter').put(this.authorize, (req, res) => meter.add(req, res));
-        this.app.route('/meter').post(this.authorize, (req, res) => meter.update(req, res));
-        this.app.route('/meter').delete(this.authorize, (req, res) => meter.delete(req, res));
+        this.app.route('/meters').get(this.authorize, (req, res) => {
+            const meter = new MeterController(res.locals.payload);
+            meter.get(req, res);
+        });
+        this.app.route('/meter').put(this.authorize, (req, res) => {
+            const meter = new MeterController(res.locals.payload);
+            meter.add(req, res);
+        });
+        this.app.route('/meter').post(this.authorize, (req, res) => {
+            const meter = new MeterController(res.locals.payload);
+            meter.update(req, res);
+        });
+        this.app.route('/meter').delete(this.authorize, (req, res) => {
+            const meter = new MeterController(res.locals.payload);
+            meter.delete(req, res);
+        });
     }
 
     public registerTariffRoutes() {
-        const tariff = new TariffController();
-        this.app.route('/tariffs').get(this.authorize, (req, res) => tariff.get(req, res));
-        this.app.route('/tariff').put(this.authorize, (req, res) => tariff.add(req, res));
-        this.app.route('/tariff').post(this.authorize, (req, res) => tariff.update(req, res));
-        this.app.route('/tariff').delete(this.authorize, (req, res) => tariff.delete(req, res));
+        this.app.route('/tariffs').get(this.authorize, (req, res) => {
+            const tariff = new TariffController(res.locals.payload);
+            tariff.get(req, res);
+        });
+        this.app.route('/tariff').put(this.authorize, (req, res) => {
+            const tariff = new TariffController(res.locals.payload);
+            tariff.add(req, res);
+        });
+        this.app.route('/tariff').post(this.authorize, (req, res) => {
+            const tariff = new TariffController(res.locals.payload);
+            tariff.update(req, res);
+        });
+        this.app.route('/tariff').delete(this.authorize, (req, res) => {
+            const tariff = new TariffController(res.locals.payload);
+            tariff.delete(req, res);
+        });
     }
 
     private authorize = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        const payload = this.authService.ensureAuthenticated(req.headers.authorization);
-        if (payload) {
-            res.locals.payload = payload;
-            next();
-        } else {
-            res.status(403).send();
+        try {
+            res.locals.payload = this.authService.ensureAuthenticated(req.headers.authorization);
+            if (res.locals.payload) {
+                next();
+            } else {
+                res.status(403).send({ message: 'Please login.' });
+            }
+        } catch (error) {
+            if (error.name === 'TokenExpiredError') {
+                res.status(403).send({ message: 'Please login again.' });
+            }
         }
     }
 }
