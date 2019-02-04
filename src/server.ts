@@ -1,4 +1,3 @@
-import app from './core/app';
+import { App } from './core/app';
 const PORT = 60336;
-
-app.listen(PORT, () => console.log('Express server listening on port ' + PORT));
+new App().app.listen(PORT, () => console.log('Express server listening on port ' + PORT));

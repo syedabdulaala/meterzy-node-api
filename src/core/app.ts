@@ -38,5 +38,3 @@ export class App {
         };
     }
 }
-
-export default new App().app;
